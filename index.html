@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en" x-data="{ open: false }" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home page</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Alpine.js -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+      }
+    </style>
+  </head>
+
+  <body class="bg-white text-gray-900 relative" x-data="{ open: false }">
+
+    <!-- ✅ Sticky Mirror Navigation Bar -->
+    <header class="sticky top-0 z-50 backdrop-blur-md bg-white/70 text-gray-900 shadow-md">
+      <div class="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
+        <!-- ✅ Logo -->
+         <a href="index.html" class="flex title-font font-medium items-center md:justify-start justify-center text-white">
+  <video autoplay loop muted playsinline class="w-48 cursor-pointer rounded-full">
+    <source src="QR SCANIFY.mp4" type="video/mp4" />
+      </video>
+</a>
+
+        <!-- ✅ Desktop Navigation -->
+        <nav class="hidden md:flex space-x-6 font-medium">
+          <a href="index.html" class="hover:text-[#a3cc78] transition">Home</a>
+          <a href="policy.html" class="hover:text-[#a3cc78] transition"> Policy</a>
+          <a href="terms&conditions.html" class="hover:text-[#a3cc78] transition">Terms & Conditions</a>
+        </nav>
+
+        <!-- ✅ Mobile Hamburger Button -->
+        <div class="md:hidden">
+          <button @click="open = !open" class="text-gray-900 focus:outline-none z-50 relative">
+            <template x-if="!open">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </template>
+            <template x-if="open">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </template>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- ✅ Mobile Mirror Overlay Menu (Size limited to text) -->
+    <div
+      x-show="open"
+      x-transition
+      @click.away="open = false"
+      class="md:hidden fixed top-0 left-0 w-full z-40 bg-white/40 backdrop-blur-md text-gray-900 px-6 py-8 space-y-4 font-semibold max-h-fit"
+    >
+      <a href="index.html" class="block py-2 hover:text-[#2a5d23]" @click="open = false">Home</a>
+            <a href="policy.html" class="block py-2 hover:text-[#a3cc78]" @click="open = false">Our Policy</a>
+      <a href="terms&conditions.html" class="block py-2 hover:text-[#a3cc78]" @click="open = false">Terms & Conditions</a>
+    </div>
+
+  </body>
+</html>
+
+    <!-- ✅ Feature Section -->
+    <section class="p-6 md:p-10 bg-[#f0fdf4]">
+      <div class="max-w-6xl mx-auto">
+        <h2 class="text-3xl font-bold text-[#14532d] mb-10 text-center">Choose a Scanning Option</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+          <!-- ✅ QR Code Scanner -->
+          <div class="bg-white rounded-xl border border-[#2a5d23] p-6 text-center hover:shadow-lg transition">
+            <img src="https://img.icons8.com/ios-filled/100/2a5d23/qr-code.png" class="mx-auto mb-4 w-16 h-16" alt="QR Icon" />
+            <h3 class="text-xl font-semibold text-[#2a5d23] mb-2">QR Code Scanner</h3>
+            <p class="text-gray-700 mb-4">Scan QR codes using your device's camera instantly.</p>
+            <button onclick="startQRScanner()" class="bg-[#2a5d23] text-white px-4 py-2 rounded hover:bg-[#1f421b] transition">Scan QR</button>
+            <div id="qr-result" class="text-sm mt-4 text-[#14532d] font-medium break-words"></div>
+            <video id="qr-video" class="mx-auto mt-4 rounded hidden w-64 h-64" autoplay muted playsinline></video>
+          </div>
+
+          <!-- ✅ Barcode Scanner -->
+          <div class="bg-white rounded-xl border border-[#2a5d23] p-6 text-center hover:shadow-lg transition">
+            <img src="Barcode.png" class="mx-auto mb-4 w-180 h-16" alt="Barcode Icon" />
+            <h3 class="text-xl font-semibold text-[#2a5d23] mb-2">Bar Code Reader</h3>
+            <p class="text-gray-700 mb-4">Scan product barcodes using your device's camera.</p>
+            <button onclick="startBarcodeScanner()" class="bg-[#2a5d23] text-white px-4 py-2 rounded hover:bg-[#1f421b] transition">Read Barcode</button>
+            <div id="barcode-result" class="text-sm mt-4 text-[#14532d] font-medium break-words"></div>
+            <video id="barcode-video" class="mx-auto mt-4 rounded hidden w-64 h-64" autoplay muted playsinline></video>
+          </div>
+
+<!-- ✅ Upload & Scan with Centered Text -->
+<div class="bg-white rounded-xl border border-[#a3cc78] p-6 hover:shadow-lg transition w-full max-w-md mx-auto">
+  <img src="uploadimage.png" class="mx-auto mb-4 w-16 h-16" alt="Upload Icon" />
+
+  <!-- Centered Heading and Paragraph -->
+  <h3 class="text-xl font-semibold text-[#14532d] mb-2 text-center">Upload & Scan</h3>
+  <p class="text-gray-700 mb-4 text-center">Upload an image to detect and scan a QR or Barcode.</p>
+
+  <!-- File Input -->
+  <input type="file" id="fileInput" accept="image/*" class="mb-4 block mx-auto">
+
+  <!-- Preview Image -->
+  <img id="previewImage" src="" class="max-w-xs h-64 mx-auto hidden border rounded" crossorigin="anonymous" />
+
+  <!-- Scan Button -->
+  <button id="scanButton" class="bg-[#14532d] text-[#ffffff] px-4 py-2 rounded hover:bg-[#90b86a] transition block mx-auto">
+    Scan Now
+  </button>
+
+  <!-- Scan Result -->
+  <div id="scanResult" class="mt-4 text-sm text-[#14532d] font-semibold break-words text-center"></div>
+</div>
+
+
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ✅ QR Scanner Script -->
+    <script type="module">
+      import { BrowserMultiFormatReader } from "https://cdn.jsdelivr.net/npm/@zxing/browser@latest/+esm";
+      const codeReader = new BrowserMultiFormatReader();
+      const qrVideo = document.getElementById("qr-video");
+      const qrResult = document.getElementById("qr-result");
+
+      async function startQRScanner() {
+        qrResult.textContent = "📷 Initializing camera...";
+        qrVideo.classList.remove("hidden");
+
+        try {
+          const devices = await navigator.mediaDevices.enumerateDevices();
+          const videoInput = devices.find(d => d.kind === "videoinput");
+          if (!videoInput) throw new Error("No camera found.");
+
+          await codeReader.decodeFromVideoDevice(videoInput.deviceId, qrVideo, (result, err, controls) => {
+            if (result) {
+              qrResult.innerHTML = `✅ Scanned: <a href="${result.getText()}" target="_blank" class="underline text-blue-600">${result.getText()}</a>`;
+              controls.stop();
+              qrVideo.classList.add("hidden");
+              window.open(result.getText(), "_blank");
+            }
+          });
+        } catch (err) {
+          qrResult.textContent = `❌ ${err.message}`;
+          qrVideo.classList.add("hidden");
+        }
+      }
+
+      window.startQRScanner = startQRScanner;
+    </script>
+
+    <!-- ✅ Barcode Scanner Script -->
+    <script type="module">
+      import { BrowserMultiFormatReader } from "https://cdn.jsdelivr.net/npm/@zxing/browser@latest/+esm";
+      const reader = new BrowserMultiFormatReader();
+      const barcodeVideo = document.getElementById("barcode-video");
+      const barcodeResult = document.getElementById("barcode-result");
+
+      async function startBarcodeScanner() {
+        barcodeResult.textContent = "📷 Initializing camera...";
+        barcodeVideo.classList.remove("hidden");
+
+        try {
+          const devices = await navigator.mediaDevices.enumerateDevices();
+          const videoInput = devices.find(d => d.kind === "videoinput");
+          if (!videoInput) throw new Error("No camera found.");
+
+          await reader.decodeFromVideoDevice(videoInput.deviceId, barcodeVideo, (result, err, controls) => {
+            if (result) {
+              barcodeResult.innerHTML = `✅ Code: <a href="${result.getText()}" target="_blank" class="underline text-blue-600">${result.getText()}</a>`;
+              controls.stop();
+              barcodeVideo.classList.add("hidden");
+              window.open(result.getText(), "_blank");
+            }
+          });
+        } catch (err) {
+          barcodeResult.textContent = `❌ ${err.message}`;
+          barcodeVideo.classList.add("hidden");
+        }
+      }
+
+      window.startBarcodeScanner = startBarcodeScanner;
+    </script>
+
+    <!-- ✅ Upload & Scan Script -->
+    <script type="module">
+      import { BrowserMultiFormatReader } from "https://cdn.jsdelivr.net/npm/@zxing/library@latest/+esm";
+      const fileInput = document.getElementById("fileInput");
+      const previewImage = document.getElementById("previewImage");
+      const scanButton = document.getElementById("scanButton");
+      const scanResult = document.getElementById("scanResult");
+
+      fileInput.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          previewImage.src = reader.result;
+          previewImage.classList.remove("hidden");
+        };
+        reader.readAsDataURL(file);
+      });
+
+      scanButton.addEventListener("click", async () => {
+        const reader = new BrowserMultiFormatReader();
+        try {
+          const result = await reader.decodeFromImageElement(previewImage);
+          scanResult.innerHTML = `✅ Code: <a href="${result.text}" target="_blank" class="underline text-blue-600">${result.text}</a>`;
+          window.open(result.text, "_blank");
+        } catch (err) {
+          scanResult.textContent = "❌ QR or Barcode not detected.";
+        }
+      });
+    </script>
+
+
+
+<!-- Footer -->
+<footer class="bg-black text-white body-font">
+  <div class="container px-5 py-20 mx-auto flex flex-wrap">
+    
+    <!-- Logo & About -->
+    <div class="lg:w-1/4 md:w-1/2 w-full px-4 mb-10">
+      <!-- Logo -->
+      <a href="index.html" class="flex title-font font-medium items-center md:justify-start justify-center text-white">
+  <video autoplay loop muted playsinline class="w-48 cursor-pointer rounded-full">
+    <source src="BLACK QRSCANIFY.mp4" type="video/mp4" />
+      </video>
+</a>
+
+     
+      <p class="text-sm text-white">Instantly scan QR codes, barcodes, and images with smart, seamless precision.</p>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="lg:w-1/4 md:w-1/2 w-full px-4 mb-10">
+      <h4 class="text-white font-semibold mb-3">Quicklinks</h4>
+      <nav class="list-none space-y-2">
+        <li><a href="index.html" class="hover:text-white">Home</a></li>
+        <li><a href="Policy.html" class="hover:text-white">our Policy</a></li>
+        <li><a href="terms&conditions.html" class="hover:text-white">Terms & Conditions</a></li>
+      </nav>
+    </div>
+
+    <!-- Contact Info -->
+    <div class="lg:w-1/4 md:w-1/2 w-full px-4 mb-10">
+      <h4 class="text-white font-semibold mb-3">Contact</h4>
+      <ul class="space-y-2">
+        <li><a href="https://wa.me/923470998339?text=Hi%20Khuzaima,%20I%20would%20like%20to%20discuss%20a%20project%20with%20you" class="hover:text-white">+92 347 0998339</a></li>
+        <li><a href="mailto:khuzaima_paracha@hotmail.com" class="hover:text-white">khuzaima_paracha@hotmail.com</a></li>
+        <li><span>Quetta, Pakistan</span></li>
+      </ul>
+    </div>
+
+    <!-- Social Media -->
+    <div class="lg:w-1/4 md:w-1/2 w-full px-4 mb-10">
+      <h4 class="text-white font-semibold mb-3">Follow Us</h4>
+      <div class="flex space-x-4">
+        <a href="https://www.facebook.com/AdZensei" class="text-white hover:text-green-400">
+          <svg fill="currentColor" class="w-5 h-5" viewBox="0 0 24 24">
+            <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>
+          </svg>
+        </a>
+        <a href="https://www.instagram.com/adzense_i/" class="text-white hover:text-green-400">
+          <svg fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
+            <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+            <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/>
+            <path d="M17.5 6.5h.01"/>
+          </svg>
+        </a>
+        <a href="https://www.linkedin.com/company/adzensei" class="text-white hover:text-green-400">
+          <svg fill="currentColor" class="w-5 h-5" viewBox="0 0 24 24">
+            <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-4 0v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/>
+            <circle cx="4" cy="4" r="2"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom -->
+  <div class="bg-gray-800 bg-opacity-75">
+    <div class="container mx-auto px-5 py-4 flex flex-col items-center justify-center text-center">
+      <p class="text-sm text-white">
+        Copyright © 2025 QR-SCANIFY —
+        <a href="www.adzensei.com" class="text-white ml-1 hover:underline" target="_blank">All Rights Reserved by ADZENSEI</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+
+
+
+  </body>
+</html>
+
+

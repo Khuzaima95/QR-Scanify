@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en" x-data="{ open: false }" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home page</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Alpine.js -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+      }
+    </style>
+  </head>
+
+  <body class="bg-white text-gray-900 relative" x-data="{ open: false }">
+
+    <!-- ✅ Sticky Mirror Navigation Bar -->
+    <header class="sticky top-0 z-50 backdrop-blur-md bg-white/70 text-gray-900 shadow-md">
+      <div class="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
+        <!-- ✅ Logo -->
+         <a href="index.html" class="flex title-font font-medium items-center md:justify-start justify-center text-white">
+  <video autoplay loop muted playsinline class="w-48 cursor-pointer rounded-full">
+    <source src="QR SCANIFY.mp4" type="video/mp4" />
+      </video>
+</a>
+
+        <!-- ✅ Desktop Navigation -->
+        <nav class="hidden md:flex space-x-6 font-medium">
+          <a href="index.html" class="hover:text-[#a3cc78] transition">Home</a>
+          <a href="policy.html" class="hover:text-[#a3cc78] transition"> Policy</a>
+          <a href="terms&conditions.html" class="hover:text-[#a3cc78] transition">Terms & Conditions</a>
+        </nav>
+
+        <!-- ✅ Mobile Hamburger Button -->
+        <div class="md:hidden">
+          <button @click="open = !open" class="text-gray-900 focus:outline-none z-50 relative">
+            <template x-if="!open">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </template>
+            <template x-if="open">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </template>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- ✅ Mobile Mirror Overlay Menu (Size limited to text) -->
+    <div
+      x-show="open"
+      x-transition
+      @click.away="open = false"
+      class="md:hidden fixed top-0 left-0 w-full z-40 bg-white/40 backdrop-blur-md text-gray-900 px-6 py-8 space-y-4 font-semibold max-h-fit"
+    >
+      <a href="index.html" class="block py-2 hover:text-[#2a5d23]" @click="open = false">Home</a>
+      <a href="Aboutus.html" class="block py-2 hover:text-[#2a5d23]" @click="open = false">About Us</a>
+      <a href="ourprojects.html" class="block py-2 hover:text-[#2a5d23]" @click="open = false">Our Projects</a>
+      <a href="our services.html" class="block py-2 hover:text-[#a3cc78]" @click="open = false">Services</a>
+      <a href="contactus.html" class="block py-2 hover:text-[#a3cc78]" @click="open = false">Contact Us</a>
+      <a href="servicepolicy.html" class="block py-2 hover:text-[#a3cc78]" @click="open = false">Service Policy</a>
+      <a href="terms&conditions.html" class="block py-2 hover:text-[#a3cc78]" @click="open = false">Terms & Conditions</a>
+    </div>
+
+  </body>
+</html>
+
+
+<!--Terms & Conditions -->
+    <section class="py-10 px-4 bg-gradient-to-bl from-[#f0fdf4] to-[#d9f2e4]">
+  <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl p-8">
+    <div class="flex items-center gap-3 mb-4">
+      <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" stroke-width="1.5"
+        viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M12 6v6l4 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      <h2 class="text-2xl font-extrabold text-green-700">Terms & Conditions – QR Scanify</h2>
+    </div>
+
+    <p class="text-gray-700 text-[16px] mb-4">
+      By using <span class="font-semibold text-green-800">QR Scanify</span>, you agree to the following terms and conditions. These terms are designed to ensure transparency, security, and a trusted experience.
+    </p>
+
+    <ul class="list-disc list-inside space-y-3 text-gray-700 mb-6">
+      <li><span class="font-semibold text-green-800">Use at Your Own Risk:</span> QR Scanify provides tools for barcode and QR scanning. Users are responsible for any actions taken based on scanned data.</li>
+      <li><span class="font-semibold text-green-800">No Liability:</span> We are not liable for the content, accuracy, or destination of scanned links or uploaded images.</li>
+      <li><span class="font-semibold text-green-800">Non-commercial Use:</span> This tool is meant for personal or educational purposes only, unless otherwise agreed in writing.</li>
+      <li><span class="font-semibold text-green-800">No Harmful Use:</span> You agree not to use this tool to upload, scan, or spread harmful, illegal, or offensive material.</li>
+    </ul>
+
+    <p class="text-gray-700 text-[16px]">
+      These terms may be updated from time to time. Continued use of QR Scanify means you accept any new changes made to our terms.
+    </p>
+
+    <p class="mt-6 text-gray-700">
+      For questions or clarifications, please contact us at 
+      <a href="mailto:info@qrscanify.com" class="text-green-700 font-semibold underline">info@qrscanify.com</a>.
+    </p>
+  </div>
+</section>
+
+
+<!-- Footer -->
+<footer class="bg-black text-white body-font">
+  <div class="container px-5 py-20 mx-auto flex flex-wrap">
+    
+    <!-- Logo & About -->
+    <div class="lg:w-1/4 md:w-1/2 w-full px-4 mb-10">
+      <!-- Logo -->
+      <a href="index.html" class="flex title-font font-medium items-center md:justify-start justify-center text-white">
+  <video autoplay loop muted playsinline class="w-48 cursor-pointer rounded-full">
+    <source src="BLACK QRSCANIFY.mp4" type="video/mp4" />
+      </video>
+</a>
+
+     
+      <p class="text-sm text-white">Instantly scan QR codes, barcodes, and images with smart, seamless precision.</p>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="lg:w-1/4 md:w-1/2 w-full px-4 mb-10">
+      <h4 class="text-white font-semibold mb-3">Quicklinks</h4>
+      <nav class="list-none space-y-2">
+        <li><a href="index.html" class="hover:text-white">Home</a></li>
+        <li><a href="Policy.html" class="hover:text-white">our Policy</a></li>
+        <li><a href="terms&conditions.html" class="hover:text-white">Terms & Conditions</a></li>
+      </nav>
+    </div>
+
+    <!-- Contact Info -->
+    <div class="lg:w-1/4 md:w-1/2 w-full px-4 mb-10">
+      <h4 class="text-white font-semibold mb-3">Contact</h4>
+      <ul class="space-y-2">
+        <li><a href="https://wa.me/923470998339?text=Hi%20Khuzaima,%20I%20would%20like%20to%20discuss%20a%20project%20with%20you" class="hover:text-white">+92 347 0998339</a></li>
+        <li><a href="mailto:khuzaima_paracha@hotmail.com" class="hover:text-white">khuzaima_paracha@hotmail.com</a></li>
+        <li><span>Quetta, Pakistan</span></li>
+      </ul>
+    </div>
+
+    <!-- Social Media -->
+    <div class="lg:w-1/4 md:w-1/2 w-full px-4 mb-10">
+      <h4 class="text-white font-semibold mb-3">Follow Us</h4>
+      <div class="flex space-x-4">
+        <a href="https://www.facebook.com/AdZensei" class="text-white hover:text-green-400">
+          <svg fill="currentColor" class="w-5 h-5" viewBox="0 0 24 24">
+            <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>
+          </svg>
+        </a>
+        <a href="https://www.instagram.com/adzense_i/" class="text-white hover:text-green-400">
+          <svg fill="none" stroke="currentColor" stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">
+            <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+            <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/>
+            <path d="M17.5 6.5h.01"/>
+          </svg>
+        </a>
+        <a href="https://www.linkedin.com/company/adzensei" class="text-white hover:text-green-400">
+          <svg fill="currentColor" class="w-5 h-5" viewBox="0 0 24 24">
+            <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-4 0v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/>
+            <circle cx="4" cy="4" r="2"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom -->
+  <div class="bg-gray-800 bg-opacity-75">
+    <div class="container mx-auto px-5 py-4 flex flex-col items-center justify-center text-center">
+      <p class="text-sm text-white">
+        Copyright © 2025 QR-SCANIFY —
+        <a href="www.adzensei.com" class="text-white ml-1 hover:underline" target="_blank">All Rights Reserved by ADZENSEI</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+
+
+
+  </body>
+</html>
