@@ -24,7 +24,7 @@
   <body class="bg-white text-gray-900 relative" x-data="{ open: false }">
 
     <!-- ✅ Sticky Mirror Navigation Bar -->
-    <header class="sticky top-0 z-50 backdrop-blur-md bg-white/70 text-gray-900 shadow-md">
+    <header class="sticky top-0 z-50 bg-white text-gray-900 shadow-md">
       <div class="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
         <!-- ✅ Logo -->
          <a href="index.html" class="flex title-font font-medium items-center md:justify-start justify-center text-white">
@@ -84,21 +84,21 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-          <!-- ✅ QR Code Scanner -->
-          <!-- ✅ QR Code Scanner -->
+         <!-- ✅ QR Code Scanner -->
 <div class="bg-white rounded-xl border border-[#2a5d23] p-6 text-center hover:shadow-lg transition">
   <img src="https://img.icons8.com/ios-filled/100/2a5d23/qr-code.png" class="mx-auto mb-4 w-16 h-16" alt="QR Icon" />
   <h3 class="text-xl font-semibold text-[#2a5d23] mb-2">QR Code Scanner</h3>
   <p class="text-gray-700 mb-4">Scan QR codes using your device's camera instantly.</p>
 
   <!-- Scan QR Button -->
-  <button onclick="startQRScanner()" class="bg-[#2a5d23] text-white px-4 py-2 rounded hover:bg-[#1f421b] transition">Scan QR</button>
+  <button onclick="startQRScanner()" class="bg-[#2a5d23] text-white px-4 py-2 rounded hover:bg-[#1f421b] transition">
+    Scan QR
+  </button>
 
   <!-- Toggle Camera Button -->
   <button id="toggleCameraBtn" class="bg-white border-2 border-[#2a5d23] text-[#2a5d23] mt-2 px-4 py-1 rounded hover:bg-gray-100 transition">
-  Switch Camera
-</button>
-
+    Switch Camera
+  </button>
 
   <!-- Scan Result -->
   <div id="qr-result" class="text-sm mt-4 text-[#14532d] font-medium break-words"></div>
@@ -106,7 +106,6 @@
   <!-- Video Preview -->
   <video id="qr-video" class="mx-auto mt-4 rounded hidden w-64 h-64" autoplay muted playsinline></video>
 </div>
-
 
           <!-- ✅ Barcode Scanner -->
           <div class="bg-white rounded-xl border border-[#2a5d23] p-6 text-center hover:shadow-lg transition">
@@ -151,7 +150,7 @@
 
 
 
-    <!-- ✅ QR Scanner Script -->
+ <!-- ✅ QR Scanner Script -->
 <script type="module">
   import { BrowserMultiFormatReader } from "https://cdn.jsdelivr.net/npm/@zxing/browser@latest/+esm";
 
@@ -163,6 +162,7 @@
   let videoInputDevices = [];
   let currentDeviceIndex = 0;
   let controls;
+  let autoStopTimer;
 
   async function startQRScanner() {
     qrResult.textContent = "📷 Initializing camera...";
@@ -178,16 +178,28 @@
 
       const selectedDeviceId = videoInputDevices[currentDeviceIndex].deviceId;
 
-      if (controls) controls.stop(); // Stop previous camera if running
+      if (controls) controls.stop();
+      clearTimeout(autoStopTimer);
 
       controls = await codeReader.decodeFromVideoDevice(selectedDeviceId, qrVideo, (result, err, ctrl) => {
         if (result) {
-          qrResult.innerHTML = `✅ Scanned: <a href="${result.getText()}" target="_blank" class="underline text-blue-600">${result.getText()}</a>`;
+          const text = result.getText();
+          qrResult.innerHTML = `✅ Scanned: <a href="${text}" target="_blank" class="underline text-blue-600">${text}</a>`;
           ctrl.stop();
           qrVideo.classList.add("hidden");
-          window.open(result.getText(), "_blank");
+          clearTimeout(autoStopTimer);
+          window.open(text, "_blank");
         }
       });
+
+      // Auto stop camera after 10 seconds if no QR code is scanned
+      autoStopTimer = setTimeout(() => {
+        if (controls) {
+          controls.stop();
+          qrVideo.classList.add("hidden");
+          qrResult.textContent = "⏹ Camera stopped due to inactivity.";
+        }
+      }, 10000);
 
     } catch (err) {
       qrResult.textContent = `❌ ${err.message}`;
@@ -198,7 +210,7 @@
   toggleCameraBtn.addEventListener("click", async () => {
     if (videoInputDevices.length > 1) {
       currentDeviceIndex = (currentDeviceIndex + 1) % videoInputDevices.length;
-      if (controls) controls.stop(); // Stop current camera
+      if (controls) controls.stop();
       startQRScanner();
     } else {
       alert("Only one camera available.");
@@ -273,35 +285,35 @@
     </script>
 
 
-<!-- ✅ QR Code Generator from Link (Responsive with Mobile Side Borders) -->
-<div class="bg-white rounded-xl border border-[#2a5d23] p-4 sm:p-6 text-center hover:shadow-lg transition w-[90%] max-w-md mx-auto mt-6 border-l-4 border-r-4 sm:border-l sm:border-r">
+<!-- ✅ QR Code Generator from Link (Clean Spacing & Uniform Size) -->
+<div class="bg-white border border-[#2a5d23] rounded-xl p-4 text-center hover:shadow-md transition w-[90%] max-w-md mx-auto mt-4 border-l-4 border-r-4">
   <!-- Icon -->
-  <img src="https://img.icons8.com/ios-filled/100/2a5d23/qr-code.png" class="mx-auto mb-4 w-14 h-14 sm:w-16 sm:h-16" alt="QR Icon" />
+  <img src="https://img.icons8.com/ios-filled/100/2a5d23/qr-code.png" class="mx-auto mb-3 w-14 h-14" alt="QR Icon" />
 
   <!-- Heading -->
-  <h3 class="text-lg sm:text-xl font-semibold text-[#2a5d23] mb-2">Generate QR from Link</h3>
-  <p class="text-gray-700 text-sm sm:text-base mb-4 px-2 sm:px-0">Paste a URL or any text to generate a QR Code instantly.</p>
+  <h3 class="text-lg font-semibold text-[#2a5d23] mb-1">Generate QR from Link</h3>
+  <p class="text-gray-700 text-sm mb-3 px-2">Paste a URL or text to generate a QR Code instantly.</p>
 
   <!-- Input Field -->
   <input
     type="text"
     id="qrInput"
     placeholder="Enter URL or text"
-    class="border border-gray-300 rounded px-4 py-2 w-full text-sm focus:outline-none focus:ring-2 focus:ring-[#2a5d23] mb-4"
+    class="border border-gray-300 rounded px-3 py-2 w-full text-sm focus:outline-none focus:ring-2 focus:ring-[#2a5d23] mb-3"
   />
 
   <!-- Generate Button -->
   <button
     onclick="generateQRCode()"
-    class="bg-[#2a5d23] text-white px-4 py-2 rounded w-full sm:w-auto hover:bg-[#1f421b] transition"
+    class="bg-[#2a5d23] text-white px-4 py-2 rounded w-full hover:bg-[#1f421b] transition text-sm"
   >
     Generate QR
   </button>
 
   <!-- QR Output -->
-  <div id="generatedQRContainer" class="mt-6 hidden">
-    <h4 class="text-[#14532d] font-medium mb-2">Your QR Code:</h4>
-    <img id="generatedQRImage" class="mx-auto border rounded p-2 w-48 h-48 sm:w-52 sm:h-52 object-contain" src="" alt="Generated QR Code" />
+  <div id="generatedQRContainer" class="mt-4 hidden">
+    <h4 class="text-[#14532d] font-medium text-sm mb-2">Your QR Code:</h4>
+    <img id="generatedQRImage" class="mx-auto border rounded p-2 w-48 h-48 object-contain" src="" alt="Generated QR Code" />
   </div>
 </div>
 
@@ -323,7 +335,87 @@
   }
 </script>
 
+
 <br>
+
+<!-- ✅ Extract Text from Image (English Only) -->
+<div class="bg-white border border-[#2a5d23] rounded-xl p-4 sm:p-6 w-[90%] max-w-md mx-auto mt-10 mb-16 shadow-md">
+  <h3 class="text-lg sm:text-xl font-bold text-[#2a5d23] mb-3 text-center">Extract Text from Image</h3>
+  <p class="text-gray-600 text-sm text-center mb-4">Upload an image with English text. We'll extract the text for you.</p>
+
+  <!-- Upload Section -->
+  <input 
+    type="file" 
+    id="imageInput" 
+    accept="image/*" 
+    class="block w-full text-sm mb-4 border border-gray-300 rounded p-2" 
+  />
+
+  <!-- Preview Image -->
+  <img 
+    id="previewImage" 
+    class="hidden w-full h-auto rounded-lg border mb-4" 
+  />
+
+  <!-- Extract Button -->
+  <button
+    onclick="extractEnglishText()"
+    class="w-full bg-[#2a5d23] text-white py-2 rounded hover:bg-[#1e441a] transition duration-300"
+  >
+    Extract Text
+  </button>
+
+  <!-- Output Section -->
+  <div id="outputContainer" class="mt-4 hidden">
+    <label class="text-sm font-medium text-[#2a5d23]">Extracted Text:</label>
+    <textarea 
+      id="extractedText" 
+      class="w-full border rounded p-2 mt-1 text-sm" 
+      rows="6"
+    ></textarea>
+  </div>
+</div>
+
+<!-- Tesseract JS -->
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.1.1/dist/tesseract.min.js"></script>
+
+<script>
+  const imageInput = document.getElementById("imageInput");
+  const previewImage = document.getElementById("previewImage");
+  const outputContainer = document.getElementById("outputContainer");
+  const extractedText = document.getElementById("extractedText");
+
+  imageInput.addEventListener("change", () => {
+    const file = imageInput.files[0];
+    if (file) {
+      previewImage.src = URL.createObjectURL(file);
+      previewImage.classList.remove("hidden");
+    }
+  });
+
+  function extractEnglishText() {
+    const file = imageInput.files[0];
+    if (!file) {
+      alert("Please upload an image first.");
+      return;
+    }
+
+    Tesseract.recognize(file, "eng", {
+      logger: m => console.log(m)
+    })
+    .then(({ data: { text } }) => {
+      extractedText.value = text.trim();
+      outputContainer.classList.remove("hidden");
+    })
+    .catch(err => {
+      console.error(err);
+      alert("Error extracting text. Please try a clearer image.");
+    });
+  }
+</script>
+
+
+<Br>
 
 
 
