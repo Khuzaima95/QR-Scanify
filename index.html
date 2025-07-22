@@ -149,6 +149,8 @@
       </div>
     </section>
 
+
+
     <!-- ✅ QR Scanner Script -->
 <script type="module">
   import { BrowserMultiFormatReader } from "https://cdn.jsdelivr.net/npm/@zxing/browser@latest/+esm";
@@ -269,6 +271,59 @@
         }
       });
     </script>
+
+
+<!-- ✅ QR Code Generator from Link (Responsive with Mobile Side Borders) -->
+<div class="bg-white rounded-xl border border-[#2a5d23] p-4 sm:p-6 text-center hover:shadow-lg transition w-[90%] max-w-md mx-auto mt-6 border-l-4 border-r-4 sm:border-l sm:border-r">
+  <!-- Icon -->
+  <img src="https://img.icons8.com/ios-filled/100/2a5d23/qr-code.png" class="mx-auto mb-4 w-14 h-14 sm:w-16 sm:h-16" alt="QR Icon" />
+
+  <!-- Heading -->
+  <h3 class="text-lg sm:text-xl font-semibold text-[#2a5d23] mb-2">Generate QR from Link</h3>
+  <p class="text-gray-700 text-sm sm:text-base mb-4 px-2 sm:px-0">Paste a URL or any text to generate a QR Code instantly.</p>
+
+  <!-- Input Field -->
+  <input
+    type="text"
+    id="qrInput"
+    placeholder="Enter URL or text"
+    class="border border-gray-300 rounded px-4 py-2 w-full text-sm focus:outline-none focus:ring-2 focus:ring-[#2a5d23] mb-4"
+  />
+
+  <!-- Generate Button -->
+  <button
+    onclick="generateQRCode()"
+    class="bg-[#2a5d23] text-white px-4 py-2 rounded w-full sm:w-auto hover:bg-[#1f421b] transition"
+  >
+    Generate QR
+  </button>
+
+  <!-- QR Output -->
+  <div id="generatedQRContainer" class="mt-6 hidden">
+    <h4 class="text-[#14532d] font-medium mb-2">Your QR Code:</h4>
+    <img id="generatedQRImage" class="mx-auto border rounded p-2 w-48 h-48 sm:w-52 sm:h-52 object-contain" src="" alt="Generated QR Code" />
+  </div>
+</div>
+
+<!-- ✅ Script -->
+<script>
+  function generateQRCode() {
+    const input = document.getElementById("qrInput").value.trim();
+    const img = document.getElementById("generatedQRImage");
+    const container = document.getElementById("generatedQRContainer");
+
+    if (input === "") {
+      alert("Please enter a URL or text.");
+      return;
+    }
+
+    const encoded = encodeURIComponent(input);
+    img.src = `https://api.qrserver.com/v1/create-qr-code/?data=${encoded}&size=200x200`;
+    container.classList.remove("hidden");
+  }
+</script>
+
+<br>
 
 
 
