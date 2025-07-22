@@ -341,21 +341,29 @@
 <!-- ✅ Extract Text from Image (English Only) -->
 <div class="bg-white border border-[#2a5d23] rounded-xl p-4 sm:p-6 w-[90%] max-w-md mx-auto mt-10 mb-16 shadow-md">
   <h3 class="text-lg sm:text-xl font-bold text-[#2a5d23] mb-3 text-center">Extract Text from Image</h3>
-  <p class="text-gray-600 text-sm text-center mb-4">Upload an image with English text. We'll extract the text for you.</p>
+  <p class="text-gray-600 text-sm text-center mb-4">Upload or capture an image with English text. We'll extract the text for you.</p>
 
   <!-- Upload Section -->
   <input 
     type="file" 
     id="imageInput" 
     accept="image/*" 
-    class="block w-full text-sm mb-4 border border-gray-300 rounded p-2" 
-  />
+    class="block w-full text-sm mb-4 border border-gray-300 rounded p-2"
+  ></input>
+
+  <!-- Take Photo from Camera (Mobile) -->
+  <button 
+    onclick="openCamera()" 
+    class="w-full bg-[#f4f4f4] text-[#2a5d23] py-2 rounded border border-[#2a5d23] hover:bg-[#e8f5e9] transition duration-300 mb-4"
+  >
+    Take Photo from Camera
+  </button>
 
   <!-- Preview Image -->
   <img 
     id="previewImage" 
-    class="hidden w-full h-auto rounded-lg border mb-4" 
-  />
+    class="hidden w-full h-auto rounded-lg border mb-4"
+  ></img>
 
   <!-- Extract Button -->
   <button
@@ -396,7 +404,7 @@
   function extractEnglishText() {
     const file = imageInput.files[0];
     if (!file) {
-      alert("Please upload an image first.");
+      alert("Please upload or capture an image first.");
       return;
     }
 
@@ -412,7 +420,19 @@
       alert("Error extracting text. Please try a clearer image.");
     });
   }
+
+  function openCamera() {
+    imageInput.setAttribute("capture", "environment");
+    imageInput.click();
+
+    // Auto revoke camera permission if unused
+    let timeout = setTimeout(() => {
+      imageInput.removeAttribute("capture");
+    }, 10000); // 10 seconds
+  }
 </script>
+
+
 
 
 <Br>
