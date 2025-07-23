@@ -164,13 +164,27 @@
   let controls;
   let autoStopTimer;
 
+  // ✅ Preload camera devices on page load
+  async function initDevices() {
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      videoInputDevices = devices.filter(d => d.kind === "videoinput");
+    } catch (e) {
+      console.error("Device init failed", e);
+    }
+  }
+
+  // 👇 Call it right away
+  initDevices();
+
   async function startQRScanner() {
     qrResult.textContent = "📷 Initializing camera...";
     qrVideo.classList.remove("hidden");
 
     try {
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      videoInputDevices = devices.filter(d => d.kind === "videoinput");
+      if (videoInputDevices.length === 0) {
+        await initDevices();
+      }
 
       if (videoInputDevices.length === 0) {
         throw new Error("No camera found.");
@@ -192,7 +206,6 @@
         }
       });
 
-      // Auto stop camera after 10 seconds if no QR code is scanned
       autoStopTimer = setTimeout(() => {
         if (controls) {
           controls.stop();
@@ -211,7 +224,7 @@
     if (videoInputDevices.length > 1) {
       currentDeviceIndex = (currentDeviceIndex + 1) % videoInputDevices.length;
       if (controls) controls.stop();
-      startQRScanner();
+      await startQRScanner();
     } else {
       alert("Only one camera available.");
     }
@@ -219,6 +232,7 @@
 
   window.startQRScanner = startQRScanner;
 </script>
+
 
     <!-- ✅ Barcode Scanner Script -->
     <script type="module">
