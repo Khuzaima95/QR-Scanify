@@ -164,30 +164,19 @@
   let controls;
   let autoStopTimer;
 
-  // ✅ Preload camera devices on page load
-  async function initDevices() {
-    try {
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      videoInputDevices = devices.filter(d => d.kind === "videoinput");
-    } catch (e) {
-      console.error("Device init failed", e);
-    }
+  async function getCameras() {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    videoInputDevices = devices.filter(device => device.kind === "videoinput");
   }
-
-  // 👇 Call it right away
-  initDevices();
 
   async function startQRScanner() {
     qrResult.textContent = "📷 Initializing camera...";
     qrVideo.classList.remove("hidden");
 
     try {
+      // Ensure camera list is up to date
       if (videoInputDevices.length === 0) {
-        await initDevices();
-      }
-
-      if (videoInputDevices.length === 0) {
-        throw new Error("No camera found.");
+        await getCameras();
       }
 
       const selectedDeviceId = videoInputDevices[currentDeviceIndex].deviceId;
@@ -213,7 +202,6 @@
           qrResult.textContent = "⏹ Camera stopped due to inactivity.";
         }
       }, 10000);
-
     } catch (err) {
       qrResult.textContent = `❌ ${err.message}`;
       qrVideo.classList.add("hidden");
@@ -221,10 +209,14 @@
   }
 
   toggleCameraBtn.addEventListener("click", async () => {
+    if (videoInputDevices.length === 0) {
+      await getCameras();
+    }
+
     if (videoInputDevices.length > 1) {
       currentDeviceIndex = (currentDeviceIndex + 1) % videoInputDevices.length;
-      if (controls) controls.stop();
-      await startQRScanner();
+      if (controls) controls.stop(); // Stop current camera if running
+      await startQRScanner();        // Immediately restart with next camera
     } else {
       alert("Only one camera available.");
     }
@@ -232,6 +224,7 @@
 
   window.startQRScanner = startQRScanner;
 </script>
+
 
 
     <!-- ✅ Barcode Scanner Script -->
