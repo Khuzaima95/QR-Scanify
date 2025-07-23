@@ -84,19 +84,19 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-         <!-- ✅ QR Code Scanner -->
+<!-- ✅ QR Code Scanner -->
 <div class="bg-white rounded-xl border border-[#2a5d23] p-6 text-center hover:shadow-lg transition">
   <img src="https://img.icons8.com/ios-filled/100/2a5d23/qr-code.png" class="mx-auto mb-4 w-16 h-16" alt="QR Icon" />
   <h3 class="text-xl font-semibold text-[#2a5d23] mb-2">QR Code Scanner</h3>
   <p class="text-gray-700 mb-4">Scan QR codes using your device's camera instantly.</p>
 
   <!-- Scan QR Button -->
-  <button onclick="startQRScanner()" class="bg-[#2a5d23] text-white px-4 py-2 rounded hover:bg-[#1f421b] transition">
+  <button onclick="startQRScanner()" class="bg-[#2a5d23] text-white  px-4 py-2 rounded hover:bg-[#1f421b] transition">
     Scan QR
   </button>
 
   <!-- Toggle Camera Button -->
-  <button id="toggleCameraBtn" class="bg-white border-2 border-[#2a5d23] text-[#2a5d23] mt-2 px-4 py-1 rounded hover:bg-gray-100 transition">
+  <button id="toggleCameraBtn" class="bg-white border-2 border-[#2a5d23] text-[#2a5d23] px-4 py-1.5 rounded hover:bg-gray-100 transition">
     Switch Camera
   </button>
 
@@ -107,27 +107,23 @@
   <video id="qr-video" class="mx-auto mt-4 rounded hidden w-64 h-64" autoplay muted playsinline></video>
 </div>
 
-<!-- ✅ Barcode Scanner UI -->
+<!-- ✅ Barcode Scanner Section -->
 <div class="bg-white rounded-xl border border-[#2a5d23] p-6 text-center hover:shadow-lg transition">
-  <img src="Barcode.png" class="mx-auto mb-4 w-180 h-16" alt="Barcode Icon" />
+  <img src="Barcode.png" class="mx-auto mb-4 w-40 h-16" alt="Barcode Icon" />
   <h3 class="text-xl font-semibold text-[#2a5d23] mb-2">Bar Code Reader</h3>
   <p class="text-gray-700 mb-4">Scan product barcodes using your device's camera.</p>
 
-  <!-- Read Button -->
-  <button onclick="startBarcodeScanner()" class="bg-[#2a5d23] text-white px-4 py-2 rounded hover:bg-[#1f421b] transition">
-    Read Barcode
-  </button>
+  <div class="flex justify-center gap-4 mb-4">
+    <button onclick="startBarcodeScanner()" class="bg-[#2a5d23] text-white  px-4 py-2 rounded hover:bg-[#1f421b] transition">
+      Scan Barcode
+    </button>
+    <button onclick="switchCamera()" class="bg-white border-2 border-[#2a5d23] text-[#2a5d23] px-4 py-2 rounded hover:bg-gray-100 transition">
+      Switch Camera
+    </button>
+  </div>
 
-  <!-- Switch Button -->
-  <button onclick="switchBarcodeCamera()" class="bg-white border-2 border-[#2a5d23] text-[#2a5d23] mt-2 px-4 py-1 rounded hover:bg-gray-100 transition">
-    Switch Camera
-  </button>
-
-  <!-- Result -->
+  <video id="barcode-video" class="mx-auto mt-4 rounded hidden w-64 h-64" autoplay muted playsinline></video>
   <div id="barcode-result" class="text-sm mt-4 text-[#14532d] font-medium break-words"></div>
-
-  <!-- Video Preview -->
-  <video id="barcode-video" class="mx-auto mt-4 rounded w-full max-w-md h-80 hidden" autoplay muted playsinline></video>
 </div>
 
 
@@ -241,89 +237,80 @@
 
 
 
-  <!-- ✅ Barcode Scanner Script -->
+<!-- ✅ Script: Camera + Barcode + Timeout + Switch -->
 <script type="module">
-  import {
-    BrowserMultiFormatReader,
-    BarcodeFormat,
-    DecodeHintType
-  } from "https://cdn.jsdelivr.net/npm/@zxing/browser@latest/+esm";
+  import { BrowserMultiFormatReader } from "https://cdn.jsdelivr.net/npm/@zxing/browser@latest/+esm";
 
-  const hints = new Map();
-  hints.set(DecodeHintType.POSSIBLE_FORMATS, [
-    BarcodeFormat.CODE_128,
-    BarcodeFormat.CODE_39,
-    BarcodeFormat.EAN_13,
-    BarcodeFormat.UPC_A
-  ]);
-
-  const reader = new BrowserMultiFormatReader(hints);
+  const reader = new BrowserMultiFormatReader();
   const barcodeVideo = document.getElementById("barcode-video");
   const barcodeResult = document.getElementById("barcode-result");
 
-  let videoInputDevices = [];
+  let videoDevices = [];
   let currentDeviceIndex = 0;
-  let activeControls;
+  let controls = null;
+  let timeoutId = null;
+  let scanning = false;
 
-  async function getVideoDevices() {
-    const devices = await navigator.mediaDevices.enumerateDevices();
-    videoInputDevices = devices.filter(d => d.kind === "videoinput");
-  }
+  // 🔁 Switch camera
+  window.switchCamera = async function () {
+    if (videoDevices.length < 2) {
+      barcodeResult.textContent = "Only one camera available.";
+      return;
+    }
+    currentDeviceIndex = (currentDeviceIndex + 1) % videoDevices.length;
+    stopScanner();
+    startBarcodeScanner();
+  };
 
-  async function startBarcodeScanner() {
+  // ▶️ Start scanning
+  window.startBarcodeScanner = async function () {
+    if (scanning) return;
+    scanning = true;
     barcodeResult.textContent = "📷 Initializing camera...";
     barcodeVideo.classList.remove("hidden");
 
     try {
-      if (videoInputDevices.length === 0) {
-        await getVideoDevices();
-      }
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      videoDevices = devices.filter(device => device.kind === "videoinput");
+      if (videoDevices.length === 0) throw new Error("No camera found");
 
-      const selectedDevice = videoInputDevices[currentDeviceIndex];
-      if (!selectedDevice) throw new Error("No camera found.");
+      const deviceId = videoDevices[currentDeviceIndex]?.deviceId;
+      controls = await reader.decodeFromVideoDevice(deviceId, barcodeVideo, (result, err, ctrl) => {
+        if (result) {
+          const text = result.getText();
+          barcodeResult.innerHTML = `✅ Code: <a href="${text}" target="_blank" class="underline text-blue-600">${text}</a>`;
+          stopScanner();
 
-      if (activeControls) activeControls.stop();
-
-      activeControls = await reader.decodeFromVideoDevice(
-        selectedDevice.deviceId,
-        barcodeVideo,
-        (result, err, controls) => {
-          if (result) {
-            const code = result.getText();
-            barcodeResult.innerHTML = `✅ Code: <a href="${code}" target="_blank" class="underline text-blue-600">${code}</a>`;
-            controls.stop();
-            barcodeVideo.classList.add("hidden");
-            window.open(code, "_blank");
-          } else if (err) {
-            console.log("Scan error:", err);
+          // Auto-open URL
+          if (text.startsWith("http://") || text.startsWith("https://")) {
+            window.open(text, "_blank");
           }
         }
-      );
-    } catch (err) {
-      barcodeResult.textContent = `❌ ${err.message}`;
+      });
+
+      // Set 10-second inactivity timeout
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        barcodeResult.textContent = "⏱️ Timeout: Camera turned off after 10 seconds.";
+        stopScanner();
+      }, 10000);
+
+    } catch (error) {
+      barcodeResult.textContent = `❌ ${error.message}`;
       barcodeVideo.classList.add("hidden");
+      scanning = false;
     }
+  };
+
+  // ⏹️ Stop scanning & camera
+  function stopScanner() {
+    if (controls) controls.stop();
+    barcodeVideo.classList.add("hidden");
+    scanning = false;
+    clearTimeout(timeoutId);
   }
-
-  async function switchBarcodeCamera() {
-    if (videoInputDevices.length === 0) {
-      await getVideoDevices();
-    }
-
-    if (videoInputDevices.length <= 1) {
-      alert("Only one camera available.");
-      return;
-    }
-
-    currentDeviceIndex = (currentDeviceIndex + 1) % videoInputDevices.length;
-    if (activeControls) activeControls.stop();
-    await startBarcodeScanner();
-  }
-
-  // Expose globally
-  window.startBarcodeScanner = startBarcodeScanner;
-  window.switchBarcodeCamera = switchBarcodeCamera;
 </script>
+
 
     <!-- ✅ Upload & Scan Script -->
     <script type="module">
