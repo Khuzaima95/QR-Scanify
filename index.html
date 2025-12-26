@@ -345,54 +345,134 @@
 
 
 <!-- ✅ QR Code Generator from Link (Clean Spacing & Uniform Size) -->
-<div class="bg-white border border-[#2a5d23] rounded-xl p-4 text-center hover:shadow-md transition w-[90%] max-w-md mx-auto mt-4 border-l-4 border-r-4">
-  <!-- Icon -->
-  <img src="https://img.icons8.com/ios-filled/100/2a5d23/qr-code.png" class="mx-auto mb-3 w-14 h-14" alt="QR Icon" />
+<!-- QR Code Generator -->
+<div class="bg-white border border-[#2a5d23] rounded-xl p-4 w-[90%] max-w-md mx-auto mt-4">
 
-  <!-- Heading -->
-  <h3 class="text-lg font-semibold text-[#2a5d23] mb-1">Generate QR from Link</h3>
-  <p class="text-gray-700 text-sm mb-3 px-2">Paste a URL or text to generate a QR Code instantly.</p>
+  <h3 class="text-lg font-semibold text-[#2a5d23] mb-2 text-center">
+    Generate & Design QR Code
+  </h3>
 
-  <!-- Input Field -->
+  <!-- URL Input -->
   <input
     type="text"
     id="qrInput"
     placeholder="Enter URL or text"
-    class="border border-gray-300 rounded px-3 py-2 w-full text-sm focus:outline-none focus:ring-2 focus:ring-[#2a5d23] mb-3"
+    class="border rounded px-3 py-2 w-full text-sm mb-3 focus:ring-2 focus:ring-[#2a5d23]"
   />
 
   <!-- Generate Button -->
   <button
-    onclick="generateQRCode()"
-    class="bg-[#2a5d23] text-white px-4 py-2 rounded w-full hover:bg-[#1f421b] transition text-sm"
-  >
+    onclick="generateQR()"
+    class="bg-[#2a5d23] text-white px-4 py-2 rounded w-full hover:bg-[#1f421b] transition">
     Generate QR
   </button>
 
-  <!-- QR Output -->
-  <div id="generatedQRContainer" class="mt-4 hidden">
-    <h4 class="text-[#14532d] font-medium text-sm mb-2">Your QR Code:</h4>
-    <img id="generatedQRImage" class="mx-auto border rounded p-2 w-48 h-48 object-contain" src="" alt="Generated QR Code" />
+  <!-- DESIGN PANEL -->
+  <div id="designPanel" class="hidden mt-5 space-y-3">
+
+    <!-- QR Preview -->
+    <div id="qrCanvas" class="mx-auto w-52 h-52 bg-white p-3 rounded-xl shadow"></div>
+
+    <!-- Color Picker -->
+    <div>
+      <label class="text-sm font-medium text-gray-700">QR Color</label>
+      <input type="color" id="qrColor" value="#0b3b8c" class="w-full h-10">
+    </div>
+
+    <!-- Logo Upload -->
+    <div>
+      <label class="text-sm font-medium text-gray-700">Upload Logo</label>
+      <input type="file" id="logoInput" accept="image/*" class="w-full text-sm">
+    </div>
+
+    <!-- Download -->
+    <button
+      onclick="downloadQR()"
+      class="bg-[#14532d] text-white px-4 py-2 rounded w-full hover:bg-[#0f3e21]">
+      Download QR
+    </button>
+
   </div>
 </div>
 
-<!-- ✅ Script -->
-<script>
-  function generateQRCode() {
-    const input = document.getElementById("qrInput").value.trim();
-    const img = document.getElementById("generatedQRImage");
-    const container = document.getElementById("generatedQRContainer");
+<script src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
 
-    if (input === "") {
-      alert("Please enter a URL or text.");
+<script>
+  let qrCode;
+
+  function generateQR() {
+    const data = document.getElementById("qrInput").value.trim();
+    if (!data) {
+      alert("Please enter a URL or text");
       return;
     }
 
-    const encoded = encodeURIComponent(input);
-    img.src = `https://api.qrserver.com/v1/create-qr-code/?data=${encoded}&size=200x200`;
-    container.classList.remove("hidden");
+    document.getElementById("designPanel").classList.remove("hidden");
+
+    if (qrCode) {
+      qrCode.update({ data });
+      return;
+    }
+
+    qrCode = new QRCodeStyling({
+      width: 220,
+      height: 220,
+      data: data,
+      margin: 5,
+      qrOptions: {
+        errorCorrectionLevel: "H"
+      },
+      dotsOptions: {
+        color: "#0b3b8c",
+        type: "rounded"
+      },
+      cornersSquareOptions: {
+        color: "#2a5d23",
+        type: "extra-rounded"
+      },
+      cornersDotOptions: {
+        color: "#2a5d23",
+        type: "dot"
+      },
+      backgroundOptions: {
+        color: "#ffffff"
+      },
+      imageOptions: {
+        crossOrigin: "anonymous",
+        margin: 5
+      }
+    });
+
+    document.getElementById("qrCanvas").innerHTML = "";
+    qrCode.append(document.getElementById("qrCanvas"));
+  }
+
+  // Change QR color
+  document.getElementById("qrColor").addEventListener("input", e => {
+    qrCode.update({
+      dotsOptions: { color: e.target.value }
+    });
+  });
+
+  // Upload logo
+  document.getElementById("logoInput").addEventListener("change", e => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      qrCode.update({
+        image: reader.result
+      });
+    };
+    reader.readAsDataURL(file);
+  });
+
+  function downloadQR() {
+    qrCode.download({ name: "custom-qr", extension: "png" });
   }
 </script>
+
 
 
 <br>
@@ -577,5 +657,6 @@
 
   </body>
 </html>
+
 
 
